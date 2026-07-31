@@ -122,6 +122,7 @@ export const api = {
     apiFetch('/budget', { method: 'POST', body: JSON.stringify({ amount, currency }) }),
 
   getTimeSeries: (days: number = 30) => apiFetch('/timeseries?days=' + days),
+  seed: () => apiFetch('/seed', { method: 'POST' }),
 };
 
 export function getDeviceId(): string {

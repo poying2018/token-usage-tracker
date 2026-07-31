@@ -85,6 +85,45 @@ export default {
         }
         if (asset && asset.ok) return asset;
       } catch (e) { console.error('Asset error:', e); }
+
+      // Seed demo data
+      if (path === '/api/seed' && request.method === 'POST') {
+        const devices = ['device-win-001', 'device-mac-002', 'device-phone-003'];
+        const vendors = [
+          { id: 'openai', models: ['gpt-4o', 'gpt-4o-mini', 'o1-preview', 'o3-mini'], pricing: { 'gpt-4o': { input: 2.5, output: 10 }, 'gpt-4o-mini': { input: 0.15, output: 0.6 }, 'o1-preview': { input: 15, output: 60 }, 'o3-mini': { input: 1.1, output: 4.4 } } },
+          { id: 'anthropic', models: ['claude-3-5-sonnet', 'claude-3-haiku', 'claude-3-opus'], pricing: { 'claude-3-5-sonnet': { input: 3, output: 15 }, 'claude-3-haiku': { input: 0.25, output: 1.25 }, 'claude-3-opus': { input: 15, output: 75 } } },
+          { id: 'deepseek', models: ['deepseek-chat', 'deepseek-reasoner'], pricing: { 'deepseek-chat': { input: 0.27, output: 1.1 }, 'deepseek-reasoner': { input: 0.55, output: 2.19 } } },
+          { id: 'glm', models: ['glm-4-plus', 'glm-4-air', 'glm-4-flash'], pricing: { 'glm-4-plus': { input: 5, output: 5 }, 'glm-4-air': { input: 1, output: 1 }, 'glm-4-flash': { input: 0, output: 0 } } },
+          { id: 'qwen', models: ['qwen-max', 'qwen-plus', 'qwen-turbo'], pricing: { 'qwen-max': { input: 2.4, output: 9.6 }, 'qwen-plus': { input: 0.8, output: 2 }, 'qwen-turbo': { input: 0.3, output: 0.6 } } },
+          { id: 'gemini', models: ['gemini-1.5-pro', 'gemini-1.5-flash', 'gemini-2.0-flash'], pricing: { 'gemini-1.5-pro': { input: 3.5, output: 10.5 }, 'gemini-1.5-flash': { input: 0.35, output: 1.05 }, 'gemini-2.0-flash': { input: 0.1, output: 0.4 } } },
+        ];
+        const now = Date.now();
+        const batch = [];
+        for (let day = 30; day >= 0; day--) {
+          const baseDate = now - day * 86400000;
+          const count = 5 + Math.floor(Math.random() * 20);
+          for (let i = 0; i < count; i++) {
+            const vIdx = Math.floor(Math.random() * vendors.length);
+            const v = vendors[vIdx];
+            const mIdx = Math.floor(Math.random() * v.models.length);
+            const model = v.models[mIdx];
+            const pricing = v.pricing[model];
+            const hour = Math.floor(Math.random() * 24);
+            const minute = Math.floor(Math.random() * 60);
+            const createdAt = baseDate + (hour * 3600 + minute * 60) * 1000;
+            const prompt = 200 + Math.floor(Math.random() * 5000);
+            const completion = 100 + Math.floor(Math.random() * 2000);
+            const total = prompt + completion;
+            const cost = (prompt * pricing.input + completion * pricing.output) / 1000000;
+            const uuid = 'seed-' + baseDate + '-' + i + '-' + v.id;
+            const deviceId = devices[Math.floor(Math.random() * devices.length)];
+            batch.push(env.DB.prepare('INSERT OR IGNORE INTO usage_logs (uuid, device_id, vendor_id, model, prompt_tokens, completion_tokens, total_tokens, cost_usd, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)').bind(uuid, deviceId, v.id, model, prompt, completion, total, cost, createdAt));
+          }
+        }
+        await env.DB.batch(batch);
+        return json({ ok: true, seeded: batch.length });
+      }
+
       return err('Not found', 404);
     }
 
