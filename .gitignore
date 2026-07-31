@@ -23,3 +23,7 @@ Thumbs.db
 *.log
 temp_write.mjs
 temp_write.js
+
+# Legacy Flutter prototype (removed from git but may exist on disk)
+lib/
+pubspec.yaml
