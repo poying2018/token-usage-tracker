@@ -139,6 +139,15 @@ export default {
         return json({ url: 'https://github.com/login/oauth/authorize?' + params, state });
       }
 
+      if (path === '/api/auth/github/callback' && request.method === 'GET') {
+        const code = url.searchParams.get('code');
+        const state = url.searchParams.get('state');
+        if (code && state) {
+          return Response.redirect(url.origin + '/login?code=' + encodeURIComponent(code) + '&state=' + encodeURIComponent(state), 302);
+        }
+        return err('Missing code or state', 400);
+      }
+
       if (path === '/api/auth/github/callback' && request.method === 'POST') {
         const { code, redirect_uri } = await request.json();
         if (!code) return err('Missing code');

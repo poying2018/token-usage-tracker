@@ -1,0 +1,97 @@
+name: Build Desktop App
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: web/package-lock.json
+      
+      - name: Install dependencies
+        working-directory: ./web
+        run: npm ci
+      
+      - name: Build frontend
+        working-directory: ./web
+        run: npm run build
+      
+      - name: Build Electron app (Windows)
+        working-directory: ./web
+        run: npx @electron/packager . "Token Usage Tracker" --platform=win32 --arch=x64 --out=release --overwrite
+        env:
+          ELECTRON_MIRROR: https://npmmirror.com/mirrors/electron/
+      
+      - name: Zip Windows app
+        working-directory: ./web
+        run: Compress-Archive -Path "release/Token Usage Tracker-win32-x64/*" -DestinationPath "../TokenUsageTracker-Windows.zip" -Force
+      
+      - name: Upload Windows artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: TokenUsageTracker-Windows
+          path: TokenUsageTracker-Windows.zip
+
+  build-macos:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: web/package-lock.json
+      
+      - name: Install dependencies
+        working-directory: ./web
+        run: npm ci
+      
+      - name: Build frontend
+        working-directory: ./web
+        run: npm run build
+      
+      - name: Build Electron app (macOS)
+        working-directory: ./web
+        run: npx @electron/packager . "Token Usage Tracker" --platform=darwin --arch=universal --out=release --overwrite
+        env:
+          ELECTRON_MIRROR: https://npmmirror.com/mirrors/electron/
+      
+      - name: Zip macOS app
+        working-directory: ./web
+        run: zip -r ../TokenUsageTracker-macOS.zip "release/Token Usage Tracker-darwin-universal/"
+      
+      - name: Upload macOS artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: TokenUsageTracker-macOS
+          path: TokenUsageTracker-macOS.zip
+
+  release:
+    needs: [build-windows, build-macos]
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/')
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+      
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            TokenUsageTracker-Windows/TokenUsageTracker-Windows.zip
+            TokenUsageTracker-macOS/TokenUsageTracker-macOS.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
