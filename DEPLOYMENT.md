@@ -61,6 +61,12 @@ npx wrangler deploy
 
 将 Worker URL 填入 GitHub OAuth App 的 Homepage URL 和 callback URL。
 
+## 当前部署
+
+Worker URL: https://token-usage-tracker.20050xyz.workers.dev
+
+数据库 ID: afc7dc0e-8672-4afc-85cf-a5ca419817d9
+
 ## 第七步：配置 GitHub Actions 自动部署（可选）
 
 在 GitHub 仓库 Settings -> Secrets and variables -> Actions 中添加：

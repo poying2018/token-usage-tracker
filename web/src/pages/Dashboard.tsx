@@ -1,17 +1,23 @@
 import React, { useState, useEffect } from 'react';
 import ReactECharts from 'echarts-for-react';
 import { api, StatsData, formatTokens, formatUsd, formatCny, vendorColor, vendorName } from '../utils/api';
+import { generateDemoData, calculateStats } from '../utils/demoData';
 
 export default function Dashboard() {
   const [period, setPeriod] = useState<'today' | 'month' | 'last30days'>('today');
   const [stats, setStats] = useState<StatsData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [demoMode, setDemoMode] = useState(false);
 
   useEffect(() => {
     setLoading(true);
     api.getStats(period)
-      .then(setStats)
-      .catch(console.error)
+      .then(data => { setStats(data); setDemoMode(false); })
+      .catch(() => {
+        const demoRecords = generateDemoData(30);
+        setStats(calculateStats(demoRecords, period) as any);
+        setDemoMode(true);
+      })
       .finally(() => setLoading(false));
   }, [period]);
 
@@ -120,6 +126,12 @@ export default function Dashboard() {
 
   return (
     <div>
+      {demoMode && (
+        <div style={{ background: 'rgba(251,191,36,0.15)', border: '1px solid rgba(251,191,36,0.3)', borderRadius: 'var(--radius-sm)', padding: '12px 16px', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <span style={{ fontSize: '18px' }}>⚠️</span>
+          <span style={{ fontSize: '13px', color: 'var(--warning)' }}>演示模式 — 使用本地模拟数据。配置 GitHub OAuth 后可连接真实后端。</span>
+        </div>
+      )}
       <div className="page-header">
         <h1 className="page-title">概览</h1>
         <div className="header-actions">

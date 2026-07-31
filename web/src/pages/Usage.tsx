@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { api, getToken, UsageRecord, Vendor, vendorName, vendorColor, formatTokens, formatUsd, formatDateTime } from '../utils/api';
+import { generateDemoData } from '../utils/demoData';
 
 export default function Usage() {
   const [records, setRecords] = useState<UsageRecord[]>([]);
@@ -10,12 +11,18 @@ export default function Usage() {
   const fetchData = useCallback(async () => {
     setLoading(true);
     try {
-      const [usageRes, vendorsRes] = await Promise.all([
-        api.getUsage({ limit: 200, vendor: selectedVendor || undefined }),
-        api.getVendors(),
-      ]);
-      setRecords(usageRes.records || []);
-      setVendors(vendorsRes.vendors || []);
+      try {
+        const [usageRes, vendorsRes] = await Promise.all([
+          api.getUsage({ limit: 200, vendor: selectedVendor || undefined }),
+          api.getVendors(),
+        ]);
+        setRecords(usageRes.records || []);
+        setVendors(vendorsRes.vendors || []);
+      } catch {
+        // Demo fallback
+        const demo = generateDemoData(30);
+        setRecords(selectedVendor ? demo.filter(r => r.vendor_id === selectedVendor) : demo);
+      }
     } catch (err) {
       console.error(err);
     } finally {
