@@ -24,7 +24,7 @@ crons = ["0 2 * * *"]
 
 # Environment variables (non-secret)
 [vars]
-GITHUB_CLIENT_ID = "placeholder"
+GITHUB_CLIENT_ID = "Ov23liXnaxwUFkK1A2D4"
 JWT_EXPIRY_HOURS = "24"
 
 # Static asset serving (frontend)
