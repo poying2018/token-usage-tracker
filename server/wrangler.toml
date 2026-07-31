@@ -7,7 +7,7 @@ compatibility_flags = ["nodejs_compat"]
 [[d1_databases]]
 binding = "DB"
 database_name = "token-usage-tracker"
-database_id = "00000000-0000-0000-0000-000000000000"
+database_id = "afc7dc0e-8672-4afc-85cf-a5ca419817d9"
 
 # Durable Object for SSE
 [[durable_objects.bindings]]
@@ -16,7 +16,7 @@ class_name = "SyncHub"
 
 [[migrations]]
 tag = "v1"
-new_classes = ["SyncHub"]
+new_sqlite_classes = ["SyncHub"]
 
 # Cron: daily cleanup at 02:00 UTC
 [triggers]
