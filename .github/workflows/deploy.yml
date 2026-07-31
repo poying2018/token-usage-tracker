@@ -1,0 +1,38 @@
+name: Deploy to Cloudflare
+
+on:
+  push:
+    branches: [main, master]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install frontend deps
+        run: cd web && npm ci
+
+      - name: Build frontend
+        run: cd web && npm run build
+
+      - name: Install server deps
+        run: cd server && npm ci
+
+      - name: Deploy to Cloudflare
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CF_API_TOKEN }}
+          accountId: ${{ secrets.CF_ACCOUNT_ID }}
+          workingDirectory: server
+          secrets: |
+            JWT_SECRET
+            GITHUB_CLIENT_SECRET
+        env:
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          GITHUB_CLIENT_SECRET: ${{ secrets.GITHUB_CLIENT_SECRET }}
