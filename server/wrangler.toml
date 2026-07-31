@@ -3,6 +3,11 @@ main = "src/index.ts"
 compatibility_date = "2025-07-01"
 compatibility_flags = ["nodejs_compat"]
 
+# Custom domain
+routes = [
+  { pattern = "token.20050912.xyz/*", zone_name = "20050912.xyz" }
+]
+
 # D1 database binding
 [[d1_databases]]
 binding = "DB"
