@@ -3,6 +3,15 @@ import ReactECharts from 'echarts-for-react';
 import { api, StatsData, formatTokens, formatUsd, formatCny, vendorColor, vendorName } from '../utils/api';
 import { generateDemoData, calculateStats } from '../utils/demoData';
 
+const seedDemoData = async () => {
+  try {
+    await api.seed();
+    window.location.reload();
+  } catch (e) {
+    console.error('Seed failed:', e);
+  }
+};
+
 export default function Dashboard() {
   const [period, setPeriod] = useState<'today' | 'month' | 'last30days'>('today');
   const [stats, setStats] = useState<StatsData | null>(null);
@@ -135,10 +144,13 @@ export default function Dashboard() {
       <div className="page-header">
         <h1 className="page-title">概览</h1>
         <div className="header-actions">
-          <div className="tabs" style={{ marginBottom: 0 }}>
-            <button className={tabClass('today')} onClick={() => setPeriod('today')}>今日</button>
-            <button className={tabClass('month')} onClick={() => setPeriod('month')}>本月</button>
-            <button className={tabClass('last30days')} onClick={() => setPeriod('last30days')}>近30天</button>
+          <div className="flex gap-2 items-center">
+            <button className="btn btn-sm btn-outline" onClick={seedDemoData}>生成演示数据</button>
+            <div className="tabs" style={{ marginBottom: 0 }}>
+              <button className={tabClass('today')} onClick={() => setPeriod('today')}>今日</button>
+              <button className={tabClass('month')} onClick={() => setPeriod('month')}>本月</button>
+              <button className={tabClass('last30days')} onClick={() => setPeriod('last30days')}>近30天</button>
+            </div>
           </div>
         </div>
       </div>
