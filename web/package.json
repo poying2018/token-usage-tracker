@@ -1,0 +1,24 @@
+{
+  "name": "token-usage-tracker-web",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.31",
+    "@types/react-dom": "^18.3.7",
+    "@vitejs/plugin-react": "^4.7.0",
+    "echarts": "^6.1.0",
+    "echarts-for-react": "^3.0.6",
+    "nanoid": "^6.0.0",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
+    "react-router-dom": "^7.18.2",
+    "typescript": "^5.9.3",
+    "vite": "^5.4.21"
+  }
+}

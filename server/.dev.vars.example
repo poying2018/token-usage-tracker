@@ -1,0 +1,4 @@
+# Local dev vars (copy to .dev.vars for wrangler dev)
+JWT_SECRET=dev-jwt-secret-change-in-production
+GITHUB_CLIENT_ID=replace_with_your_id
+GITHUB_CLIENT_SECRET=replace_with_your_secret

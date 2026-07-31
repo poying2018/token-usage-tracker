@@ -1,0 +1,33 @@
+name = "token-usage-tracker"
+main = "src/index.ts"
+compatibility_date = "2025-07-01"
+compatibility_flags = ["nodejs_compat"]
+
+# D1 database binding
+[[d1_databases]]
+binding = "DB"
+database_name = "token-usage-tracker"
+database_id = "REPLACE_WITH_YOUR_D1_ID"
+
+# Durable Object for SSE
+[[durable_objects.bindings]]
+name = "SYNC_HUB"
+class_name = "SyncHub"
+
+[[migrations]]
+tag = "v1"
+new_classes = ["SyncHub"]
+
+# Cron: daily cleanup at 02:00 UTC
+[triggers]
+crons = ["0 2 * * *"]
+
+# Environment variables (non-secret)
+[vars]
+GITHUB_CLIENT_ID = "REPLACE_WITH_GITHUB_CLIENT_ID"
+JWT_EXPIRY_HOURS = "24"
+
+# Static asset serving (frontend)
+[assets]
+directory = "../web/dist"
+
