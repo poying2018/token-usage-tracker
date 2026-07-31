@@ -7,7 +7,7 @@ compatibility_flags = ["nodejs_compat"]
 [[d1_databases]]
 binding = "DB"
 database_name = "token-usage-tracker"
-database_id = "REPLACE_WITH_YOUR_D1_ID"
+database_id = "00000000-0000-0000-0000-000000000000"
 
 # Durable Object for SSE
 [[durable_objects.bindings]]
@@ -24,7 +24,7 @@ crons = ["0 2 * * *"]
 
 # Environment variables (non-secret)
 [vars]
-GITHUB_CLIENT_ID = "REPLACE_WITH_GITHUB_CLIENT_ID"
+GITHUB_CLIENT_ID = "placeholder"
 JWT_EXPIRY_HOURS = "24"
 
 # Static asset serving (frontend)
